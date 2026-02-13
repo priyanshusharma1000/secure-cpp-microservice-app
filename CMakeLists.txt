@@ -8,7 +8,15 @@ find_package(httplib CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
-add_executable(server src/main.cpp)
+
+add_executable(server
+    src/main.cpp
+    src/server.cpp
+    src/config.cpp
+)
+target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+
 
 target_link_libraries(server
     PRIVATE
@@ -16,4 +24,3 @@ target_link_libraries(server
     nlohmann_json::nlohmann_json
     spdlog::spdlog
 )
-

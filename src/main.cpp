@@ -1,21 +1,20 @@
-#include <httplib.h>
-#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
+#include "config.h"
+#include "server.h"
 
 int main() {
-    httplib::Server server;
+    auto level = Config::get_log_level();
 
-    server.Get("/health", [](const httplib::Request&, httplib::Response& res) {
-        nlohmann::json response = {
-            {"status", "ok"}
-        };
+    if (level == "debug")
+        spdlog::set_level(spdlog::level::debug);
+    else if (level == "info")
+        spdlog::set_level(spdlog::level::info);
+    else if (level == "warn")
+        spdlog::set_level(spdlog::level::warn);
+    else if (level == "error")
+        spdlog::set_level(spdlog::level::err);
 
-        res.set_content(response.dump(), "application/json");
-    });
-
-    spdlog::info("Starting server on port 8080...");
-    server.listen("0.0.0.0", 8080);
-
+    Server server;
+    server.run();
     return 0;
 }
-
