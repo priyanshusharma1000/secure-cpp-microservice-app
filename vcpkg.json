@@ -4,7 +4,8 @@
   "dependencies": [
     "cpp-httplib",
     "nlohmann-json",
-    "spdlog"
+    "spdlog",
+    "gtest"
   ]
 }
 

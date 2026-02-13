@@ -13,6 +13,7 @@ add_executable(server
     src/main.cpp
     src/server.cpp
     src/config.cpp
+    src/metrics.cpp
 )
 target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
@@ -24,3 +25,26 @@ target_link_libraries(server
     nlohmann_json::nlohmann_json
     spdlog::spdlog
 )
+
+
+
+#testing
+enable_testing()
+
+find_package(GTest CONFIG REQUIRED)
+
+add_executable(tests
+    tests/metrics_test.cpp
+    src/metrics.cpp
+)
+
+target_include_directories(tests PRIVATE include)
+
+target_link_libraries(tests
+    PRIVATE
+    GTest::gtest
+    GTest::gtest_main
+    nlohmann_json::nlohmann_json
+)
+
+add_test(NAME MetricsTests COMMAND tests)
