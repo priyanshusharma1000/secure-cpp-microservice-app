@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Build Command
 
 cmake -B build -S . \
@@ -10,100 +11,255 @@ cmake -B build -S . \
   -DVCPKG_FEATURE_FLAGS=manifests
 
   
+=======
+# 🧰 C++ Dependency Management using CMake + vcpkg
+
+## 📌 Project Overview
+
+This project demonstrates how modern C++ projects manage external dependencies using **CMake** and **vcpkg (Manifest Mode)**.
+
+The goal is to simulate an industry-style build workflow where dependencies are **automatically installed during the build** without any manual setup.
+
+---
+
+## 🔧 Tech Stack
+
+- CMake (Build System)
+- vcpkg (C++ Package Manager)
+- Manifest Mode Dependency Management
+- Modern CMake (`find_package`)
+
+---
+
+## 🏗️ Project Structure
+
+```
+project-root/
+├── src/
+├── include/
+├── vcpkg.json
+└── CMakeLists.txt
+```
+
+---
+
+## 🧱 Step 1 — Why Dependency Management Matters
+
+Real-world C++ projects depend on external libraries such as:
+
+- nlohmann_json  
+- fmt  
+- spdlog  
+- boost  
+
+Manually installing libraries is:
+
+- Time consuming  
+- Error prone  
+- Hard to reproduce on other machines  
+
+We solve this using **vcpkg Manifest Mode**.
+
+---
+
+## 📦 Step 2 — vcpkg Manifest File
+
+The project includes a dependency manifest:
+
+```
+vcpkg.json
+```
+
+### Example
+
+```json
+{
+  "dependencies": [
+    "nlohmann-json"
+  ]
+}
+```
+
+This file tells vcpkg:
+
+> “These are the libraries my project needs.”
+
+---
+
+## ⚙️ Step 3 — Build Commands
+
+Run from the project root:
+
+```bash
+cmake -B build -S . \
+  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+
+>>>>>>> a42604abd33849b61e8b7c1061dd604e0baf7ba7
 cmake --build build
+```
 
+---
 
+## 🛠️ Step 4 — Understanding the Toolchain File
 
-CMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
-This is NOT the build directory.
-This is NOT the source directory.
-This is an instruction to CMake:
-“Before you configure the project, load this extra configuration file.”
+Command used:
 
+```
+-DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+```
 
-🔧 What Is a Toolchain File?
+This is **not**:
+
+- A build directory  
+- A source directory  
+
+It is an instruction to CMake:
+
+> “Before configuring the project, load this extra configuration file.”
+
+---
+
+## 🔍 Step 5 — What Is a Toolchain File?
+
 A toolchain file tells CMake:
-Which compiler to use
-Where to search for libraries
-Where to search for include files
-How to link dependencies
-Platform-specific behavior
+
+- Which compiler to use  
+- Where to search for libraries  
+- Where to search for header files  
+- How to link dependencies  
+- Platform-specific configuration  
 
 Think of it as:
-“CMake, here are extra rules before you configure the project.”
 
+```
+CMake + Extra Rules = Toolchain
+```
 
+---
 
-🔥 Why We Need It for vcpkg
-Without toolchain:
+## ❌ What Happens Without vcpkg?
+
+When CMake sees:
+
+```cmake
 find_package(nlohmann_json CONFIG REQUIRED)
-CMake searches in:
+```
+
+CMake searches only in system locations:
+
+```
 /usr/lib
 /usr/include
-System paths
+```
 
-But your libraries are NOT there.
+But our libraries are actually inside:
 
-
-They are inside:
+```
 ~/vcpkg/installed/x64-linux/
-CMake does NOT know about this directory.
+```
 
+By default, CMake does not know this path.
 
+---
 
-💡 What The vcpkg Toolchain Does
-When you pass:
+## 🔄 Step 6 — What the vcpkg Toolchain Does
+
+When the toolchain file is passed:
+
+```bash
 -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+```
 
-CMake loads that file first.
-That file:
+CMake loads vcpkg before project configuration.
 
-Automatically installs missing packages (manifest mode)
-Adds vcpkg include paths
-Adds vcpkg library paths
-Modifies CMAKE_PREFIX_PATH
-Makes find_package() work
+The toolchain automatically:
 
-So now:
-find_package(nlohmann_json CONFIG REQUIRED)
-works because CMake now knows where to look.
+- Detects `vcpkg.json`
+- Checks required dependencies
+- Downloads missing packages
+- Builds the libraries
+- Adds include paths
+- Adds library paths
+- Updates `CMAKE_PREFIX_PATH`
+- Makes `find_package()` work seamlessly
 
+---
 
-Libraries are not present locally, so how are they available?
-Answer:
-Because we are using vcpkg in manifest mode.
-You created:
-vcpkg.json
+## 📥 Step 7 — Automatic Dependency Installation
 
+When CMake runs:
 
-When CMake runs with vcpkg toolchain:
-It sees vcpkg.json
-It checks required dependencies
-If missing → vcpkg downloads & builds them automatically
-Installs them in:
+```
+CMake → Loads vcpkg toolchain
+       → Detects vcpkg.json
+       → Installs missing packages automatically
+```
+
+Libraries are installed to:
+
+```
 ~/vcpkg/installed/x64-linux/
-That’s why you don’t manually install anything.
+```
 
+This means:
 
-Think of it like this:
+- No manual installation  
+- No setup scripts  
+- No dependency mismatch  
 
-Normal CMake:
-CMake → System Libraries Only
+---
 
-CMake + vcpkg toolchain:
+## 🧠 Step 8 — Build Workflow Architecture
+
+### ❌ Traditional CMake
+
+```
+CMake → Searches System Libraries Only → Build may fail
+```
+
+### ✅ CMake + vcpkg Toolchain
+
+```
 CMake
   ↓
 Loads vcpkg toolchain
   ↓
 vcpkg installs dependencies
   ↓
-CMake sees dependencies
+CMake discovers libraries
   ↓
-Build works
+Build succeeds 🎉
+```
 
+---
 
+## 🏆 What This Setup Demonstrates
 
+- Modern C++ dependency management  
+- Reproducible builds across machines  
+- Automatic dependency installation  
+- Clean developer onboarding  
+- Industry-standard CMake workflow  
 
+---
 
+## 💡 Key Learnings
 
+- What a CMake toolchain file is  
+- How vcpkg integrates with CMake  
+- Difference between system libraries and package manager libraries  
+- How `find_package()` works internally  
+- How Manifest Mode automates dependency installation  
 
+---
+
+## 🎯 Result
+
+A fully automated build system where:
+
+- Dependencies are declared once  
+- Installed automatically  
+- Detected by CMake  
+- Built consistently on any machine  
+
+---
