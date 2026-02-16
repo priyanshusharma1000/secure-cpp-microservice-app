@@ -5,7 +5,12 @@
 #include <spdlog/spdlog.h>
 
 void Server::run() {
-    httplib::Server server;
+httplib::SSLServer server("certs/server.crt", "certs/server.key");
+
+if (!server.is_valid()) {
+    throw std::runtime_error("Failed to start HTTPS server");
+}
+
     MetricsService metrics;
 
   server.Get("/health", [&metrics](const httplib::Request&, httplib::Response& res) {

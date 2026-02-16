@@ -1,6 +1,14 @@
 Build Command
+
 cmake -B build -S . \
   -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+
+  or tu run cmake in manifest mode use this command
+
+  cmake -B build -S . \
+  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+  -DVCPKG_FEATURE_FLAGS=manifests
+
   
 cmake --build build
 

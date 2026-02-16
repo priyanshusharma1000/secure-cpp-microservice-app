@@ -7,6 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(httplib CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+
+
+
 
 
 add_executable(server
@@ -16,6 +21,7 @@ add_executable(server
     src/metrics.cpp
 )
 target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_compile_definitions(server PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
 
 
 
@@ -24,6 +30,8 @@ target_link_libraries(server
     httplib::httplib
     nlohmann_json::nlohmann_json
     spdlog::spdlog
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )
 
 

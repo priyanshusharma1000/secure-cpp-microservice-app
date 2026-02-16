@@ -5,7 +5,8 @@
     "cpp-httplib",
     "nlohmann-json",
     "spdlog",
-    "gtest"
+    "gtest",
+    "openssl"
   ]
 }
 
