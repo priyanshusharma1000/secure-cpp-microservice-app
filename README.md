@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-Build Command
-
-cmake -B build -S . \
-  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
-
-  or tu run cmake in manifest mode use this command
-
-  cmake -B build -S . \
-  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
-  -DVCPKG_FEATURE_FLAGS=manifests
-
-  
-=======
 # 🧰 C++ Dependency Management using CMake + vcpkg
 
 ## 📌 Project Overview
@@ -94,7 +80,6 @@ Run from the project root:
 cmake -B build -S . \
   -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
 
->>>>>>> a42604abd33849b61e8b7c1061dd604e0baf7ba7
 cmake --build build
 ```
 

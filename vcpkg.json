@@ -1,12 +1,13 @@
 {
   "name": "secure-cpp-microservice",
-  "version-string": "0.1.0",
+  "version": "1.0",
   "dependencies": [
-    "cpp-httplib",
+    {
+      "name": "cpp-httplib",
+      "features": ["openssl"]
+    },
     "nlohmann-json",
     "spdlog",
-    "gtest",
-    "openssl"
+    "gtest"
   ]
 }
-
