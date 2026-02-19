@@ -1,250 +1,305 @@
-# 🧰 C++ Dependency Management using CMake + vcpkg
+# 🔐 Secure C++ Microservice — End-to-End Modern C++ + DevOps
 
 ## 📌 Project Overview
 
-This project demonstrates how modern C++ projects manage external dependencies using **CMake** and **vcpkg (Manifest Mode)**.
+This project demonstrates how to build a **production-style C++ backend microservice** using modern C++ tooling, security, containerization and CI/CD.
 
-The goal is to simulate an industry-style build workflow where dependencies are **automatically installed during the build** without any manual setup.
+The goal is to simulate an **industry-grade development workflow** where a simple HTTP server evolves into a:
+
+* Secure HTTPS service
+* Testable architecture
+* Containerized application
+* Automatically built and deployed system
+
+This repository represents a **complete backend engineering journey**.
 
 ---
 
 ## 🔧 Tech Stack
 
-- CMake (Build System)
-- vcpkg (C++ Package Manager)
-- Manifest Mode Dependency Management
-- Modern CMake (`find_package`)
+* C++20
+* CMake (Build System)
+* vcpkg (Dependency Manager – Manifest Mode)
+* cpp-httplib (HTTP/HTTPS Server)
+* OpenSSL (TLS Encryption)
+* nlohmann/json (JSON Handling)
+* spdlog (Logging)
+* GoogleTest (Unit Testing)
+* Docker (Multi-Stage Build)
+* GitHub Actions (CI/CD)
 
 ---
 
 ## 🏗️ Project Structure
 
 ```
-project-root/
+secure-cpp-microservice/
 ├── src/
+│   ├── main.cpp
+│   ├── server.cpp
+│   ├── config.cpp
+│   └── metrics.cpp
+│
 ├── include/
+│   ├── server.hpp
+│   ├── config.hpp
+│   └── metrics.hpp
+│
+├── tests/
+│   └── metrics_test.cpp
+│
 ├── vcpkg.json
-└── CMakeLists.txt
+├── CMakeLists.txt
+├── Dockerfile
+└── .github/workflows/
 ```
 
 ---
 
-## 🧱 Step 1 — Why Dependency Management Matters
+# 🟢 Phase 1 — Solving C++ Dependency Hell (vcpkg + CMake)
 
-Real-world C++ projects depend on external libraries such as:
+## ❌ Problem
 
-- nlohmann_json  
-- fmt  
-- spdlog  
-- boost  
+Real-world C++ projects depend on external libraries.
 
-Manually installing libraries is:
+Manually installing them is:
 
-- Time consuming  
-- Error prone  
-- Hard to reproduce on other machines  
+* Time consuming
+* Hard to reproduce
+* Error-prone across machines
 
-We solve this using **vcpkg Manifest Mode**.
+A fresh machine often cannot build the project.
 
----
+## ✅ Solution
 
-## 📦 Step 2 — vcpkg Manifest File
+We used **vcpkg Manifest Mode** with CMake toolchain integration.
 
-The project includes a dependency manifest:
+Dependencies are declared in:
 
 ```
 vcpkg.json
 ```
 
-### Example
-
 ```json
 {
   "dependencies": [
-    "nlohmann-json"
+    "cpp-httplib",
+    "nlohmann-json",
+    "spdlog"
   ]
 }
 ```
 
-This file tells vcpkg:
-
-> “These are the libraries my project needs.”
-
----
-
-## ⚙️ Step 3 — Build Commands
-
-Run from the project root:
+## ⚙️ Build Command
 
 ```bash
 cmake -B build -S . \
-  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+ -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
 
 cmake --build build
 ```
 
----
+## 🧠 What the Toolchain Does
 
-## 🛠️ Step 4 — Understanding the Toolchain File
+When passed, the toolchain:
 
-Command used:
-
-```
--DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
-```
-
-This is **not**:
-
-- A build directory  
-- A source directory  
-
-It is an instruction to CMake:
-
-> “Before configuring the project, load this extra configuration file.”
-
----
-
-## 🔍 Step 5 — What Is a Toolchain File?
-
-A toolchain file tells CMake:
-
-- Which compiler to use  
-- Where to search for libraries  
-- Where to search for header files  
-- How to link dependencies  
-- Platform-specific configuration  
-
-Think of it as:
-
-```
-CMake + Extra Rules = Toolchain
-```
-
----
-
-## ❌ What Happens Without vcpkg?
-
-When CMake sees:
-
-```cmake
-find_package(nlohmann_json CONFIG REQUIRED)
-```
-
-CMake searches only in system locations:
-
-```
-/usr/lib
-/usr/include
-```
-
-But our libraries are actually inside:
-
-```
-~/vcpkg/installed/x64-linux/
-```
-
-By default, CMake does not know this path.
-
----
-
-## 🔄 Step 6 — What the vcpkg Toolchain Does
-
-When the toolchain file is passed:
-
-```bash
--DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
-```
-
-CMake loads vcpkg before project configuration.
-
-The toolchain automatically:
-
-- Detects `vcpkg.json`
-- Checks required dependencies
-- Downloads missing packages
-- Builds the libraries
-- Adds include paths
-- Adds library paths
-- Updates `CMAKE_PREFIX_PATH`
-- Makes `find_package()` work seamlessly
-
----
-
-## 📥 Step 7 — Automatic Dependency Installation
-
-When CMake runs:
-
-```
-CMake → Loads vcpkg toolchain
-       → Detects vcpkg.json
-       → Installs missing packages automatically
-```
-
-Libraries are installed to:
-
-```
-~/vcpkg/installed/x64-linux/
-```
-
-This means:
-
-- No manual installation  
-- No setup scripts  
-- No dependency mismatch  
-
----
-
-## 🧠 Step 8 — Build Workflow Architecture
-
-### ❌ Traditional CMake
-
-```
-CMake → Searches System Libraries Only → Build may fail
-```
-
-### ✅ CMake + vcpkg Toolchain
-
-```
-CMake
-  ↓
-Loads vcpkg toolchain
-  ↓
-vcpkg installs dependencies
-  ↓
-CMake discovers libraries
-  ↓
-Build succeeds 🎉
-```
-
----
-
-## 🏆 What This Setup Demonstrates
-
-- Modern C++ dependency management  
-- Reproducible builds across machines  
-- Automatic dependency installation  
-- Clean developer onboarding  
-- Industry-standard CMake workflow  
-
----
-
-## 💡 Key Learnings
-
-- What a CMake toolchain file is  
-- How vcpkg integrates with CMake  
-- Difference between system libraries and package manager libraries  
-- How `find_package()` works internally  
-- How Manifest Mode automates dependency installation  
-
----
+* Detects `vcpkg.json`
+* Installs missing libraries automatically
+* Adds include and library paths
+* Makes `find_package()` work seamlessly
 
 ## 🎯 Result
 
-A fully automated build system where:
-
-- Dependencies are declared once  
-- Installed automatically  
-- Detected by CMake  
-- Built consistently on any machine  
+A **reproducible build** that works on any machine without manual setup.
 
 ---
+
+# 🟡 Phase 2 — Hardcoded Apps Are Not Deployable
+
+## ❌ Problem
+
+Server configuration was hardcoded:
+
+```cpp
+server.listen("0.0.0.0", 8080);
+```
+
+Different environments require different configs.
+
+## ✅ Solution
+
+We introduced an **ENV-based configuration module**.
+
+Environment variables supported:
+
+| Variable     | Default |
+| ------------ | ------- |
+| SERVICE_HOST | 0.0.0.0 |
+| SERVICE_PORT | 8080    |
+| LOG_LEVEL    | info    |
+
+## 🎯 Result
+
+The service became **runtime configurable** and deployment-ready.
+
+---
+
+# 🧪 Phase 3 — Untestable Code Is Dangerous
+
+## ❌ Problem
+
+Business logic was tightly coupled to HTTP layer.
+
+Testing required running the server.
+
+## ✅ Solution
+
+We separated layers:
+
+```
+Transport Layer (HTTP)
+Business Logic (MetricsService)
+```
+
+Added **GoogleTest** integration.
+
+Run tests:
+
+```bash
+cd build
+ctest
+```
+
+## 🎯 Result
+
+Fast, isolated, automated unit tests.
+
+---
+
+# 🔐 Phase 4 — HTTP Is Insecure
+
+## ❌ Problem
+
+Traffic over HTTP is readable by anyone.
+
+Not production safe.
+
+## ✅ Solution
+
+We integrated **OpenSSL** and enabled HTTPS.
+
+Server now runs using TLS certificates.
+
+Test endpoint:
+
+```bash
+curl -k https://localhost:8080/health
+```
+
+## 🎯 Result
+
+Secure encrypted communication.
+
+---
+
+# 🐳 Phase 5 — “Works on My Machine” Problem
+
+## ❌ Problem
+
+Application required manual setup and compilers.
+
+Not portable.
+
+## ✅ Solution — Multi-Stage Docker Build
+
+We created a **two-stage Docker image**:
+
+### Stage 1 — Builder
+
+* Installs compilers + vcpkg
+* Builds the project
+
+### Stage 2 — Runtime
+
+* Copies only final binary
+* Generates TLS certs at runtime
+* Runs secure server
+
+Run with:
+
+```bash
+docker build -t secure-cpp-service .
+docker run -p 8080:8080 secure-cpp-service
+```
+
+## 🎯 Result
+
+A portable production container.
+
+---
+
+# ⚙️ Phase 6 — Automating the Software Lifecycle
+
+## ❌ Problem
+
+Manual builds and deployments do not scale.
+
+## ✅ Solution — CI/CD with GitHub Actions
+
+### CI Pipeline
+
+Runs on every push:
+
+* Install dependencies
+* Build project
+* Run tests
+* Validate Docker build
+
+### CD Pipeline
+
+Runs on push to main:
+
+* Login to DockerHub securely
+* Build Docker image
+* Push latest image automatically
+
+## 🎯 Result
+
+Fully automated **build → test → deploy** workflow.
+
+---
+
+# 🧠 Final Workflow Architecture
+
+```
+Developer Push
+      ↓
+GitHub Actions CI
+(Build + Test + Docker Build)
+      ↓
+GitHub Actions CD
+(Build Image + Push to DockerHub)
+      ↓
+Deploy Anywhere 🚀
+```
+
+---
+
+# 🏆 What This Project Demonstrates
+
+* Modern C++ backend engineering
+* Secure HTTPS service development
+* Dependency management using vcpkg
+* Unit testing and modular architecture
+* Containerization best practices
+* CI/CD automation for C++ services
+
+---
+
+# 🎯 Final Result
+
+A **secure, testable, containerized and auto-deployed C++ microservice** built using industry-grade practices.
+
+---
+
+⭐ If you like this project, consider giving it a star!
