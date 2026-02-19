@@ -22,5 +22,4 @@ jobs:
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/secure-cpp-service:latest
 
-      - name: Logout from DockerHub
-        run: docker logout
+      
