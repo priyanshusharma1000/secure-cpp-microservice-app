@@ -37,20 +37,24 @@ RUN cmake -S . -B build \
 
 RUN cmake --build build
 
+
 # ---------- STAGE 2: RUNTIME ----------
 FROM ubuntu:22.04
 
 RUN apt-get update && apt-get install -y \
-    ca-certificates
+    ca-certificates \
+    openssl
 
 WORKDIR /app
 
 # Copy binary from builder
 COPY --from=builder /app/build/server .
 
-# Copy certificates
-COPY certs certs
+# Create cert directory
+RUN mkdir certs
 
 EXPOSE 8080
 
-CMD ["./server"]
+CMD openssl req -x509 -newkey rsa:2048 -keyout certs/server.key -out certs/server.crt \
+    -days 365 -nodes -subj "/CN=localhost" && \
+    ./server
