@@ -1,0 +1,309 @@
+Project Journey — Problem → Solution (Phase by Phase)
+
+Project: secure-cpp-microservice
+
+Goal:
+Build a production-style C++ backend service from scratch using modern tooling.
+
+🟢 PHASE 1 — Project Foundation & Dependency Hell 😄
+❌ Problem
+
+Starting a C++ project in real life is painful because:
+
+External libraries must be installed manually
+
+Different machines → different setups
+
+Build fails on fresh machines
+
+CMake cannot find dependencies
+
+No reproducible builds
+
+This is the classic C++ dependency problem.
+
+✅ Solution
+
+We introduced:
+
+vcpkg manifest mode
+
+CMake toolchain integration
+
+External libraries:
+
+cpp-httplib
+
+nlohmann/json
+
+spdlog
+
+We built first working endpoint:
+
+GET /health → {"status":"ok"}
+
+💡 What We Achieved
+
+We solved:
+
+👉 “How do we make C++ builds reproducible?”
+
+Now anyone can clone and build the project.
+
+This is the first step toward production readiness.
+
+🟡 PHASE 2 — Hardcoded Apps Are Not Deployable
+❌ Problem
+
+Our server had hardcoded values:
+
+server.listen("0.0.0.0", 8080);
+
+
+Real environments need different configs:
+
+Dev → 8080
+
+Test → 5000
+
+Prod → 443
+
+Docker → ENV based
+
+Hardcoded apps are not deployable.
+
+✅ Solution
+
+We introduced:
+
+Config module
+
+Environment variable reading
+
+Runtime configuration
+
+Configurable logging level
+
+Clean project architecture
+
+We separated:
+
+main → server → config
+
+💡 What We Achieved
+
+We solved:
+
+👉 “How do we make apps configurable at runtime?”
+
+Now the service behaves like a real deployable backend.
+
+🧪 PHASE 3 — Untestable Code Is Dangerous Code
+❌ Problem
+
+Our HTTP route contained business logic.
+
+That means:
+
+We must run server to test logic
+
+Tests depend on networking
+
+Hard to validate correctness
+
+Impossible to automate reliability
+
+This is un-testable architecture.
+
+✅ Solution
+
+We introduced:
+
+MetricsService (business layer)
+
+Separation of transport vs logic
+
+GoogleTest integration
+
+CMake testing pipeline
+
+We made logic testable without running server.
+
+💡 What We Achieved
+
+We solved:
+
+👉 “How do we make C++ services testable and reliable?”
+
+Now we have automated unit tests.
+
+Huge milestone.
+
+🔐 PHASE 4 — HTTP Is Insecure
+❌ Problem
+
+Service was running on plain HTTP.
+
+This means:
+
+Traffic readable by anyone
+
+No encryption
+
+Not production safe
+
+Modern services must use HTTPS.
+
+✅ Solution
+
+We added:
+
+OpenSSL via vcpkg
+
+TLS certificates
+
+HTTPS server using cpp-httplib
+
+Modern CMake compile definitions
+
+We debugged real issue:
+target_compile_definitions vs add_definitions
+
+💡 What We Achieved
+
+We solved:
+
+👉 “How do we secure C++ services with TLS?”
+
+Now service is secure by default.
+
+🐳 PHASE 5 — “Works on my machine” Problem
+❌ Problem
+
+App works locally but:
+
+Won’t run on other machines
+
+Requires manual setup
+
+Requires compilers + dependencies
+
+Not portable
+
+Classic deployment problem.
+
+✅ Solution
+
+We built:
+
+Multi-stage Dockerfile
+
+Builder image (compilers + vcpkg)
+
+Runtime image (only binary)
+
+Automatic TLS generation in container
+
+We also debugged:
+
+Docker git clone freeze
+
+CI failing due to missing certs
+
+💡 What We Achieved
+
+We solved:
+
+👉 “How do we ship C++ apps anywhere?”
+
+Now app runs with one command:
+
+docker run secure-cpp-service
+
+
+Huge step.
+
+⚙️ PHASE 6 — Manual Builds Don’t Scale
+❌ Problem
+
+Without CI/CD:
+
+No automatic build validation
+
+No automated testing
+
+No automated deployment
+
+Manual Docker push
+
+Not scalable.
+
+✅ Solution
+
+We built full CI/CD pipeline:
+
+CI Workflow
+
+Every push:
+
+Install dependencies
+
+Build project
+
+Run unit tests
+
+Validate Docker build
+
+CD Workflow
+
+Every push to main:
+
+Login to DockerHub
+
+Build image
+
+Push image automatically
+
+💡 What We Achieved
+
+We solved:
+
+👉 “How do we automate the full software lifecycle?”
+
+This is real DevOps integration.
+
+🏆 FINAL PROJECT TRANSFORMATION
+
+We started with:
+
+Simple C++ HTTP server
+
+
+We ended with:
+
+Secure, Tested, Containerized, CI/CD Automated
+C++ Microservice
+
+💥 Skills Demonstrated by This Project
+
+This single repo now shows:
+
+Modern CMake
+
+Dependency management (vcpkg)
+
+Modular architecture
+
+Unit testing (gtest)
+
+TLS security (OpenSSL)
+
+Multi-stage Docker
+
+CI pipeline (GitHub Actions)
+
+CD pipeline (DockerHub)
+
+Linux-first development
+
+This is end-to-end engineering.
